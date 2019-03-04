@@ -1,9 +1,9 @@
 ###############################################
-# 打地鼠 - 小游戏
+# hit mole - pygame app
 #
-# 开始日期: 02/03/2019
-# 结束日期: 
-# 作者: Chen
+# StartDate: 02/03/2019
+# EndDate: 03/03/2019
+# Author: Chen
 ###############################################
 import pygame
 import random
@@ -11,7 +11,7 @@ from pygame import *
 from pygame.sprite import *
 
 
-# 每个地洞的坐标
+# location of each hole
 hole_positions = []
 hole_positions.append((210, 150))
 hole_positions.append((210, 340))
@@ -26,26 +26,26 @@ hole_positions.append((405, 340))
 hole_positions.append((410, 563))
 
 
-# 地鼠对象
+# mole
 class Mole(Sprite):
 	def __init__(self):
 		Sprite.__init__(self)
-		self.image = image.load("mole.png")
+		self.image = image.load("images/mole.png")
 		self.rect = self.image.get_rect()
 		num = random.randint(0,8)
-		self.rect.left = hole_positions[8][1]
-		self.rect.top = hole_positions[8][0]
+		self.rect.left = hole_positions[num][1]
+		self.rect.top = hole_positions[num][0]
 	def flee(self):
 		num = random.randint(0,8)
 		self.rect.left = hole_positions[num][1]
 		self.rect.top = hole_positions[num][0]
 
-# 音乐对象
+# music
 class Sound():
     def __init__(self):
-        self.bgMusic = pygame.mixer.music.load("themesong.wav")
-        self.popSound = pygame.mixer.Sound("pop.wav")
-        self.hurtSound = pygame.mixer.Sound("hurt.wav")
+        self.bgMusic = pygame.mixer.music.load("music/themesong.wav")
+        self.popSound = pygame.mixer.Sound("music/pop.wav")
+        self.hurtSound = pygame.mixer.Sound("music/hurt.wav")
         pygame.mixer.music.play(-1)
     def playPop(self):
         self.popSound.play()
@@ -53,36 +53,36 @@ class Sound():
         self.hurtSound.play()
 
 
-# 游戏初始化
+# init game
 pygame.init()
-display.set_caption("打地鼠")
+display.set_caption("Get Me!")
 screen = display.set_mode((740, 540))
 
-# 创建地鼠对象
+# create mole groups
 my_mole = Mole()
 all_sprites = Group(my_mole)
 
-# 添加背景颜色 + 加载背景图片
+# add bg colour + load bg image
 screen.fill((255, 255, 255))
-background = image.load("bg.png")
+background = image.load("images/bg.png")
 
-# 显示界面 + 音乐对象
+# display interface + add create music obj
 screen.blit(background, (0, 0))
 all_sprites.draw(screen)
 display.update()
 my_sound = Sound()
 
-# 追踪游戏的时间
+# track time
 pygame.time.set_timer(pygame.USEREVENT, 1000)
 
-# 初始化数据
+# init var
 amount = 20
 clicks = 20
 seconds = 0
 wrong_clicks = 0
 pause = False
 
-
+# print result of game
 def output(resultStr):
 	basicfont = pygame.font.SysFont(None, 48)
 	text = basicfont.render(resultStr, True, (255, 0, 0), (255, 255, 255))
@@ -93,14 +93,14 @@ def output(resultStr):
 	display.update()
 
 
-# 游戏逻辑
+# Main logic
 while True:
-	# 监听游戏事件
+	# monitor input
 	ev = event.wait()
 	if ev.type == QUIT:
 		pygame.quit()
 		break
-	# 鼠标点击事件
+	# mouse hit event
 	elif ev.type == pygame.MOUSEBUTTONDOWN and pause == False:
 		clicks -= 1
 		if my_mole.rect.collidepoint(mouse.get_pos()):
@@ -110,25 +110,25 @@ while True:
 		else:
 			my_sound.playPop()
 			wrong_clicks += 1
-			# 点错4次地鼠会输掉游戏
+			# more than 4 wrong it will lose game
 			if wrong_clicks > 4:
 				pause = True
 				output('YOU LOSE THE GAME !')			
 	if ev.type == pygame.USEREVENT:
 		seconds += 1
-		# 每2秒会刷新地鼠
+		# refresh mole every 2 seconds
 		if seconds % 2 == 0 and seconds != 0 and pause == False:
 			screen.blit(background, (0, 0))
 			my_mole.flee()
 			all_sprites.draw(screen)
 			display.update()
 			amount -= 1
-			# 游戏胜利并结束
+			# win te game
 			if amount == 0:
 				screen.blit(background, (0, 0))
 				pause = True
 				output('YOU WIN :) ')
-	# 未点击地鼠超过4次游戏结束
+	# no hit more than 4 times then lose
 	if clicks - amount > 4:
 		pause = True
 		output('YOU LOSE THE GAME !')
