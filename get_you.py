@@ -1,5 +1,5 @@
 ###############################################
-# hit mole - pygame app
+# get_you - pygame app
 #
 # StartDate: 02/03/2019
 # EndDate: 03/03/2019
